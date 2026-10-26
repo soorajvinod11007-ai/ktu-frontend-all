@@ -28,9 +28,9 @@ export default function FlaggedStudents() {
   const columns = [
     { key: 'register_no', label: 'Reg No',  sortable: true, className: 'font-mono text-xs' },
     { key: 'name',        label: 'Name',    sortable: true },
-    { key: 'program_id',  label: 'Program' },
-    { key: 'batch_id',    label: 'Batch' },
-    { key: 'division_id', label: 'Div' },
+    { key: 'program_id',  label: 'Program', render: (_, r) => r.program_code || r.program_id },
+    { key: 'batch_id',    label: 'Batch',   render: (_, r) => r.batch_label || r.batch_id },
+    { key: 'division_id', label: 'Div',     render: (_, r) => r.division_name || '-' },
     { key: 'status',      label: 'Status', render: (v) => <Badge className="badge-warning">{v}</Badge> },
   ];
 

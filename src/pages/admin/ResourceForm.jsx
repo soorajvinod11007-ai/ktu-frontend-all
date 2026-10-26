@@ -88,6 +88,33 @@ export default function ResourceForm({ resource, initial, onSuccess, onCancel })
   const [form, setForm] = useState(init);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  const [dynamicOptions, setDynamicOptions] = useState({});
+
+  useEffect(() => {
+    // Automatically load options for any foreign key fields present in fields
+    const fkResources = {
+      program_id: 'programs',
+      batch_id: 'batches',
+      division_id: 'divisions',
+      faculty_id: 'faculty',
+      subject_id: 'subjects',
+      exam_session_id: 'exam-sessions',
+      student_id: 'students',
+    };
+
+    fields.forEach((f) => {
+      const res = fkResources[f.name];
+      if (res && !dynamicOptions[f.name]) {
+        adminApi.options(res)
+          .then(({ data }) => {
+            if (Array.isArray(data)) {
+              setDynamicOptions((prev) => ({ ...prev, [f.name]: data }));
+            }
+          })
+          .catch(() => {});
+      }
+    });
+  }, [resource]);
 
   const set = (name, val) => setForm((f) => ({ ...f, [name]: val }));
 
@@ -123,6 +150,24 @@ export default function ResourceForm({ resource, initial, onSuccess, onCancel })
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {fields.map((f) => {
+          if (dynamicOptions[f.name] && dynamicOptions[f.name].length > 0) {
+            return (
+              <Select
+                key={f.name}
+                label={f.label + (f.required ? ' *' : '')}
+                value={form[f.name]}
+                onChange={(e) => set(f.name, e.target.value === '' ? '' : Number(e.target.value) || e.target.value)}
+                error={errors[f.name]}
+              >
+                <option value="">Select {f.label}…</option>
+                {dynamicOptions[f.name].map((opt) => (
+                  <option key={opt.id} value={opt.id}>
+                    {opt.label || opt.name || opt.code || `ID #${opt.id}`}
+                  </option>
+                ))}
+              </Select>
+            );
+          }
           if (f.type === 'select') return (
             <Select key={f.name} label={f.label} value={form[f.name]} onChange={(e) => set(f.name, e.target.value)} error={errors[f.name]}>
               <option value="">Select…</option>

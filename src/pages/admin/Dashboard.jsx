@@ -61,7 +61,7 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold text-fg">Dashboard</h1>
           <p className="text-sm text-fg-muted mt-0.5">Academic data at a glance</p>
         </div>
-        <Button variant="secondary" icon={RefreshCw} onClick={fetchData} size="sm">Refresh</Button>
+        <Button variant="secondary" icon={RefreshCw} onClick={fetchData} loading={loading} size="sm">Refresh</Button>
       </div>
 
       {/* Stat Cards */}
@@ -153,7 +153,7 @@ export default function Dashboard() {
               ) : (
                 (data?.recent_uploads ?? []).map((u) => (
                   <tr key={u.id} className="border-b border-border/50 table-row-hover">
-                    <td className="px-5 py-3 font-mono text-xs text-fg">{u.file_name ?? u.filename ?? '—'}</td>
+                    <td className="px-5 py-3 font-mono text-xs text-fg">{u.file_name ?? u.filename ?? '-'}</td>
                     <td className="px-5 py-3"><Badge className="badge-info">{u.file_type}</Badge></td>
                     <td className="px-5 py-3"><Badge className={statusBadge(u.status)}>{u.status}</Badge></td>
                     <td className="px-5 py-3 font-mono text-xs">

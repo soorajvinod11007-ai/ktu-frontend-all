@@ -7,6 +7,7 @@ import { Button, Input } from '../components/UI/index';
 import ThemeToggle from '../components/UI/ThemeToggle';
 
 export default function Login() {
+  const [selectedRole, setSelectedRole] = useState('admin');
   const [form, setForm] = useState({ username: '', password: '' });
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,13 @@ export default function Login() {
   const { login } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+
+  const handleRoleChange = (role) => {
+    setSelectedRole(role);
+    if (!form.username || form.username === 'admin' || form.username === 'principal') {
+      setForm((f) => ({ ...f, username: role }));
+    }
+  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -54,7 +62,35 @@ export default function Login() {
 
         {/* Card */}
         <div className="glass rounded-2xl p-7 flex flex-col gap-5">
-          <h2 className="text-base font-semibold text-fg">Sign in to continue</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold text-fg">Sign in to continue</h2>
+          </div>
+
+          {/* Role Selection Tabs */}
+          <div className="flex rounded-xl p-1 bg-muted/60 border border-border">
+            <button
+              type="button"
+              onClick={() => handleRoleChange('admin')}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                selectedRole === 'admin'
+                  ? 'bg-accent text-background shadow-sm'
+                  : 'text-fg-muted hover:text-fg'
+              }`}
+            >
+              Admin Portal
+            </button>
+            <button
+              type="button"
+              onClick={() => handleRoleChange('principal')}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                selectedRole === 'principal'
+                  ? 'bg-accent text-background shadow-sm'
+                  : 'text-fg-muted hover:text-fg'
+              }`}
+            >
+              Principal Portal
+            </button>
+          </div>
 
           {error && (
             <div className="badge-danger rounded-lg px-4 py-3 text-sm flex items-center gap-2">
@@ -67,7 +103,7 @@ export default function Login() {
               label="Username"
               icon={User}
               type="text"
-              placeholder="Enter username"
+              placeholder={`Enter ${selectedRole} username`}
               value={form.username}
               onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
               autoComplete="username"
@@ -97,18 +133,28 @@ export default function Login() {
             </div>
 
             <Button type="submit" loading={loading} className="w-full mt-1" size="lg">
-              {loading ? 'Signing in…' : 'Sign In'}
+              {loading ? 'Signing in…' : `Sign in as ${selectedRole === 'admin' ? 'Admin' : 'Principal'}`}
             </Button>
           </form>
 
           <div className="flex gap-2 text-xs text-center">
-            <div className="flex-1 glass rounded-lg p-3 border border-border">
-              <p className="text-fg-muted">Admin</p>
-              <p className="text-fg font-mono mt-0.5">Full access</p>
+            <div
+              onClick={() => handleRoleChange('admin')}
+              className={`flex-1 glass rounded-lg p-3 border cursor-pointer transition-colors ${
+                selectedRole === 'admin' ? 'border-accent bg-accent/5' : 'border-border hover:border-accent/40'
+              }`}
+            >
+              <p className="text-fg font-semibold">Admin</p>
+              <p className="text-fg-muted text-[11px] mt-0.5">Full CRUD & Uploads</p>
             </div>
-            <div className="flex-1 glass rounded-lg p-3 border border-border">
-              <p className="text-fg-muted">Principal</p>
-              <p className="text-fg font-mono mt-0.5">Reports only</p>
+            <div
+              onClick={() => handleRoleChange('principal')}
+              className={`flex-1 glass rounded-lg p-3 border cursor-pointer transition-colors ${
+                selectedRole === 'principal' ? 'border-accent bg-accent/5' : 'border-border hover:border-accent/40'
+              }`}
+            >
+              <p className="text-fg font-semibold">Principal</p>
+              <p className="text-fg-muted text-[11px] mt-0.5">Analytics & Reports</p>
             </div>
           </div>
         </div>

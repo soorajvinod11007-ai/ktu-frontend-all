@@ -160,7 +160,7 @@ export function Pagination({ page, pageSize, total, onChange }) {
   return (
     <div className="flex items-center justify-between text-sm text-fg-muted">
       <span>
-        Showing {Math.min((page - 1) * pageSize + 1, total)}–{Math.min(page * pageSize, total)} of {total.toLocaleString()}
+        Showing {Math.min((page - 1) * pageSize + 1, total)}-{Math.min(page * pageSize, total)} of {total.toLocaleString()}
       </span>
       <div className="flex gap-1">
         <Button variant="ghost" size="sm" onClick={() => onChange(page - 1)} disabled={page <= 1}>←</Button>

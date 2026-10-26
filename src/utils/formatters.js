@@ -1,11 +1,11 @@
-export const fmtPct = (n) => (n == null ? '—' : `${Number(n).toFixed(2)}%`);
-export const fmtNum = (n) => (n == null ? '—' : Number(n).toLocaleString());
+export const fmtPct = (n) => (n == null ? '-' : `${Number(n).toFixed(2)}%`);
+export const fmtNum = (n) => (n == null ? '-' : Number(n).toLocaleString());
 export const fmtDate = (iso) => {
-  if (!iso) return '—';
+  if (!iso) return '-';
   return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 };
 export const fmtDateTime = (iso) => {
-  if (!iso) return '—';
+  if (!iso) return '-';
   return new Date(iso).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 };
 
@@ -20,6 +20,7 @@ export const gradeBadge = (grade) => {
 
 export const statusBadge = (status) => {
   const map = {
+    // student / user statuses
     active:    'badge-success',
     completed: 'badge-success',
     passed:    'badge-success',
@@ -28,6 +29,17 @@ export const statusBadge = (status) => {
     failed:    'badge-danger',
     error:     'badge-danger',
     inactive:  'badge-default',
+    graduated: 'badge-info',
+    // result statuses (KTU)
+    pass:      'badge-success',
+    fail:      'badge-danger',
+    absent:    'badge-warning',
+    withheld:  'badge-warning',
+    tbp:       'badge-default',
+    // upload log statuses
+    done:      'badge-success',
+    confirmed: 'badge-success',
+    pending_confirm: 'badge-warning',
   };
   return map[status?.toLowerCase()] ?? 'badge-default';
 };
