@@ -67,7 +67,7 @@ export function DataTable({ columns, data, total = 0, page = 1, pageSize = 25, l
                 >
                   {columns.map((col) => (
                     <td key={col.key} className={clsx('px-4 py-3 text-fg', col.className)}>
-                      {col.render ? col.render(row[col.key], row) : (row[col.key] ?? '-')}
+                      {col.render ? col.render(row[col.key], row) : (row[col.key] ?? '—')}
                     </td>
                   ))}
                 </tr>

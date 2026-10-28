@@ -90,8 +90,6 @@ export const adminApi = {
   restore: (resource, id) => api.post(`/admin/${resource}/${id}/restore`),
   export: (resource, params) =>
     api.get(`/admin/${resource}/export`, { params, responseType: 'blob' }),
-  import: (resource, formData) =>
-    api.post(`/admin/${resource}/import`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
   options: (resource) => api.get(`/admin/options/${resource}`),
 };
 

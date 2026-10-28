@@ -96,7 +96,7 @@ Verify the backend at `http://localhost:8000/api/v1/health` and its API docs at 
 - **Error display** — API `error.message` shown to user; `error.request_id` logged for backend team
 - **Soft delete + restore** — Delete button on table rows; restore icon on deleted records
 - **Excel export** — Per-resource export from the table header
-- **PDF + Excel report download** — On every report page
+- **PDF + Excel report download** — PDF exports use the report download endpoint; the five principal academic reports export as formatted Excel worksheets matching their college report layouts
 - **Accessible** — `focus-ring` on all interactive elements, ARIA labels, keyboard navigation
 
 ## Project Structure

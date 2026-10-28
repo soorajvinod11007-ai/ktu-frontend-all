@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { adminApi } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
 import { Button, Input, Select } from '../../components/UI/index';
@@ -25,15 +25,15 @@ const FIELDS = {
   ],
   divisions: [
     { name: 'name',       label: 'Division Name', type: 'text',     required: true },
-    { name: 'program_id', label: 'Program ID',    type: 'number',   required: true },
-    { name: 'batch_id',   label: 'Batch ID',      type: 'number',   required: true },
+    { name: 'program_id', label: 'Program ID',    type: 'text',     required: true },
+    { name: 'batch_id',   label: 'Batch ID',      type: 'text',     required: true },
   ],
   students: [
     { name: 'register_no',  label: 'Register No',   type: 'text',   required: true },
     { name: 'name',         label: 'Name',          type: 'text',   required: true },
-    { name: 'program_id',   label: 'Program ID',    type: 'number', required: true },
-    { name: 'batch_id',     label: 'Batch ID',      type: 'number', required: true },
-    { name: 'division_id',  label: 'Division ID',   type: 'number' },
+    { name: 'program_id',   label: 'Program ID',    type: 'text',   required: true },
+    { name: 'batch_id',     label: 'Batch ID',      type: 'text',   required: true },
+    { name: 'division_id',  label: 'Division ID',   type: 'text' },
     { name: 'status',       label: 'Status',        type: 'select', options: [{ value:'active', label:'Active' },{ value:'inactive', label:'Inactive' },{ value:'graduated', label:'Graduated' }] },
   ],
   faculty: [
@@ -41,7 +41,7 @@ const FIELDS = {
     { name: 'name',       label: 'Name',         type: 'text',   required: true },
     { name: 'email',      label: 'Email',        type: 'email' },
     { name: 'phone',      label: 'Phone',        type: 'text' },
-    { name: 'program_id', label: 'Program ID',   type: 'number' },
+    { name: 'program_id', label: 'Program ID',   type: 'text' },
     { name: 'is_active',  label: 'Active',       type: 'checkbox' },
   ],
   subjects: [
@@ -53,10 +53,10 @@ const FIELDS = {
     { name: 'type',     label: 'Type',     type: 'select', options: [{ value:'theory', label:'Theory' },{ value:'lab', label:'Lab' },{ value:'elective', label:'Elective' }] },
   ],
   'course-offerings': [
-    { name: 'subject_id',    label: 'Subject ID',    type: 'number', required: true },
-    { name: 'faculty_id',    label: 'Faculty ID',    type: 'number', required: true },
-    { name: 'batch_id',      label: 'Batch ID',      type: 'number', required: true },
-    { name: 'division_id',   label: 'Division ID',   type: 'number' },
+    { name: 'subject_id',    label: 'Subject ID',    type: 'text',   required: true },
+    { name: 'faculty_id',    label: 'Faculty ID',    type: 'text',   required: true },
+    { name: 'batch_id',      label: 'Batch ID',      type: 'text',   required: true },
+    { name: 'division_id',   label: 'Division ID',   type: 'text' },
     { name: 'semester',      label: 'Semester',      type: 'number', required: true },
     { name: 'academic_year', label: 'Academic Year', type: 'text',   required: true },
     { name: 'slot',          label: 'Slot',          type: 'text' },
@@ -68,9 +68,9 @@ const FIELDS = {
     { name: 'published_on', label: 'Published On', type: 'date' },
   ],
   results: [
-    { name: 'student_id',      label: 'Student ID',      type: 'number', required: true },
-    { name: 'subject_id',      label: 'Subject ID',      type: 'number', required: true },
-    { name: 'exam_session_id', label: 'Session ID',      type: 'number', required: true },
+    { name: 'student_id',      label: 'Student ID',      type: 'text',   required: true },
+    { name: 'subject_id',      label: 'Subject ID',      type: 'text',   required: true },
+    { name: 'exam_session_id', label: 'Session ID',      type: 'text',   required: true },
     { name: 'semester',        label: 'Semester',        type: 'number', required: true },
     { name: 'grade',           label: 'Grade',           type: 'text' },
     { name: 'status',          label: 'Status',          type: 'select', options: [{ value:'pass', label:'Pass' },{ value:'fail', label:'Fail' },{ value:'absent', label:'Absent' },{ value:'withheld', label:'Withheld' }] },
@@ -88,33 +88,6 @@ export default function ResourceForm({ resource, initial, onSuccess, onCancel })
   const [form, setForm] = useState(init);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
-  const [dynamicOptions, setDynamicOptions] = useState({});
-
-  useEffect(() => {
-    // Automatically load options for any foreign key fields present in fields
-    const fkResources = {
-      program_id: 'programs',
-      batch_id: 'batches',
-      division_id: 'divisions',
-      faculty_id: 'faculty',
-      subject_id: 'subjects',
-      exam_session_id: 'exam-sessions',
-      student_id: 'students',
-    };
-
-    fields.forEach((f) => {
-      const res = fkResources[f.name];
-      if (res && !dynamicOptions[f.name]) {
-        adminApi.options(res)
-          .then(({ data }) => {
-            if (Array.isArray(data)) {
-              setDynamicOptions((prev) => ({ ...prev, [f.name]: data }));
-            }
-          })
-          .catch(() => {});
-      }
-    });
-  }, [resource]);
 
   const set = (name, val) => setForm((f) => ({ ...f, [name]: val }));
 
@@ -150,24 +123,6 @@ export default function ResourceForm({ resource, initial, onSuccess, onCancel })
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {fields.map((f) => {
-          if (dynamicOptions[f.name] && dynamicOptions[f.name].length > 0) {
-            return (
-              <Select
-                key={f.name}
-                label={f.label + (f.required ? ' *' : '')}
-                value={form[f.name]}
-                onChange={(e) => set(f.name, e.target.value === '' ? '' : Number(e.target.value) || e.target.value)}
-                error={errors[f.name]}
-              >
-                <option value="">Select {f.label}…</option>
-                {dynamicOptions[f.name].map((opt) => (
-                  <option key={opt.id} value={opt.id}>
-                    {opt.label || opt.name || opt.code || `ID #${opt.id}`}
-                  </option>
-                ))}
-              </Select>
-            );
-          }
           if (f.type === 'select') return (
             <Select key={f.name} label={f.label} value={form[f.name]} onChange={(e) => set(f.name, e.target.value)} error={errors[f.name]}>
               <option value="">Select…</option>

@@ -6,6 +6,7 @@ import ThemeToggle from '../UI/ThemeToggle';
 
 const NAV = [
   { to: '/principal',                              label: 'Report Home',          icon: BarChart2 },
+  { to: '/principal/report/student-performance',   label: 'Student Performance',  icon: GraduationCap },
   { to: '/principal/report/course-faculty-performance', label: 'Course Performance',  icon: BarChart2 },
   { to: '/principal/report/faculty-history',       label: 'Faculty History',      icon: UserCheck },
   { to: '/principal/report/supplementary-status',  label: 'Supplementary Status', icon: AlertCircle },

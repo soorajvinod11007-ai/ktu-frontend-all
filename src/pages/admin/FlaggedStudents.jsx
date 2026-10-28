@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { AlertTriangle, Search } from 'lucide-react';
 import { adminApi } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
@@ -28,9 +28,13 @@ export default function FlaggedStudents() {
   const columns = [
     { key: 'register_no', label: 'Reg No',  sortable: true, className: 'font-mono text-xs' },
     { key: 'name',        label: 'Name',    sortable: true },
-    { key: 'program_id',  label: 'Program', render: (_, r) => r.program_code || r.program_id },
-    { key: 'batch_id',    label: 'Batch',   render: (_, r) => r.batch_label || r.batch_id },
-    { key: 'division_id', label: 'Div',     render: (_, r) => r.division_name || '-' },
+    {
+      key: 'program_code',
+      label: 'Program',
+      render: (v, row) => (v ? `${v}${row.program_name ? ' – ' + row.program_name : ''}` : (row.program_id ?? '—')),
+    },
+    { key: 'batch_label', label: 'Batch', render: (v, row) => v ?? row.batch_id ?? '—' },
+    { key: 'division_name', label: 'Div', render: (v, row) => v ?? row.division_id ?? '—' },
     { key: 'status',      label: 'Status', render: (v) => <Badge className="badge-warning">{v}</Badge> },
   ];
 

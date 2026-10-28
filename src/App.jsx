@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
-import { Spinner } from './components/UI/index';
+import { Spinner, ErrorBoundary } from './components/UI/index';
 
 // Layouts
 import AdminLayout from './components/Layout/AdminLayout';
@@ -33,37 +33,39 @@ function RootRedirect() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Root */}
-        <Route path="/" element={<RootRedirect />} />
+    <ErrorBoundary title="Application Error">
+      <BrowserRouter>
+        <Routes>
+          {/* Root */}
+          <Route path="/" element={<RootRedirect />} />
 
-        {/* Login */}
-        <Route path="/login" element={<Login />} />
+          {/* Login */}
+          <Route path="/login" element={<Login />} />
 
-        {/* Admin routes */}
-        <Route element={<RequireAuth roles={['admin']} />}>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="upload" element={<UploadScreen />} />
-            <Route path="upload-logs" element={<UploadHistory />} />
-            <Route path="flagged" element={<FlaggedStudents />} />
-            {/* All 13 resource tables via one component */}
-            <Route path=":resource" element={<ResourceTable />} />
+          {/* Admin routes */}
+          <Route element={<RequireAuth roles={['admin']} />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="upload" element={<UploadScreen />} />
+              <Route path="upload-logs" element={<UploadHistory />} />
+              <Route path="flagged" element={<FlaggedStudents />} />
+              {/* All 13 resource tables via one component */}
+              <Route path=":resource" element={<ResourceTable />} />
+            </Route>
           </Route>
-        </Route>
 
-        {/* Principal routes */}
-        <Route element={<RequireAuth roles={['principal', 'admin']} />}>
-          <Route path="/principal" element={<PrincipalLayout />}>
-            <Route index element={<ReportHome />} />
-            <Route path="report/:reportId" element={<ReportView />} />
+          {/* Principal routes */}
+          <Route element={<RequireAuth roles={['principal', 'admin']} />}>
+            <Route path="/principal" element={<PrincipalLayout />}>
+              <Route index element={<ReportHome />} />
+              <Route path="report/:reportId" element={<ReportView />} />
+            </Route>
           </Route>
-        </Route>
 
-        {/* 404 */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* 404 */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }

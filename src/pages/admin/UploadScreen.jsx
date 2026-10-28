@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Upload, FileText, CheckCircle, XCircle, AlertTriangle, X, UploadCloud } from 'lucide-react';
 import { clsx } from 'clsx';
-import { uploadApi, adminApi } from '../../services/api';
+import { uploadApi } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
 import { Button, Card, Badge, Select, Spinner } from '../../components/UI/index';
 import { FILE_TYPES } from '../../utils/formatters';
@@ -14,8 +14,6 @@ export default function UploadScreen() {
 
   const [step, setStep] = useState(0);
   const [fileType, setFileType] = useState('result');
-  const [examSessionId, setExamSessionId] = useState('');
-  const [examSessions, setExamSessions] = useState([]);
   const [file, setFile] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -23,13 +21,7 @@ export default function UploadScreen() {
   const [skipErrors, setSkipErrors] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
-  useEffect(() => {
-    adminApi.options('exam-sessions')
-      .then(({ data }) => setExamSessions(Array.isArray(data) ? data : []))
-      .catch(() => {});
-  }, []);
-
-  const reset = () => { setStep(0); setFile(null); setPreview(null); setSkipErrors(false); setExamSessionId(''); };
+  const reset = () => { setStep(0); setFile(null); setPreview(null); setSkipErrors(false); };
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -44,9 +36,6 @@ export default function UploadScreen() {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('file_type', fileType);
-    if (examSessionId) {
-      fd.append('exam_session_id', examSessionId);
-    }
     try {
       const { data } = await uploadApi.preview(fd);
       setPreview(data);
@@ -101,24 +90,9 @@ export default function UploadScreen() {
       {/* Step 0: Select file */}
       {step === 0 && (
         <Card className="flex flex-col gap-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Select label="File Type" value={fileType} onChange={(e) => setFileType(e.target.value)}>
-              {FILE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-            </Select>
-
-            {['result', 'revaluation', 'grade_card'].includes(fileType) && (
-              <Select
-                label="Exam Session (Optional)"
-                value={examSessionId}
-                onChange={(e) => setExamSessionId(e.target.value)}
-              >
-                <option value="">None / Auto-detect</option>
-                {examSessions.map((s) => (
-                  <option key={s.id} value={s.id}>{s.label || s.name || `Session #${s.id}`}</option>
-                ))}
-              </Select>
-            )}
-          </div>
+          <Select label="File Type" value={fileType} onChange={(e) => setFileType(e.target.value)}>
+            {FILE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+          </Select>
 
           {/* Drop zone */}
           <div
@@ -220,7 +194,7 @@ export default function UploadScreen() {
                     {preview.sample_rows.map((row, i) => (
                       <tr key={i} className="border-b border-border/50 table-row-hover">
                         {Object.values(row).map((val, j) => (
-                          <td key={j} className="px-4 py-2 text-fg font-mono">{String(val ?? '-')}</td>
+                          <td key={j} className="px-4 py-2 text-fg font-mono">{String(val ?? '—')}</td>
                         ))}
                       </tr>
                     ))}
